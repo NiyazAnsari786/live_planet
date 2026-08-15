@@ -95,21 +95,22 @@ nav a:hover {
 }
 
 .hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1.35fr;
-  min-height: calc(100vh - 89px);
-  width: min(1200px, calc(100% - 48px));
-  margin: 0 auto;
-  align-items: center;
   position: sticky;
   top: 0;
-  height: 100vh;
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - 89px);
+  height: calc(100vh - 89px);
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
 }
 
 .hero-text {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  width: 45%;
+  pointer-events: auto;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.8);
 }
 
 .eyebrow {
@@ -134,8 +135,12 @@ h1 {
 }
 
 .earth-canvas {
-  height: min(720px, 78vh);
-  min-height: 500px;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 @media (max-width: 700px) {
