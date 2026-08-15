@@ -5,10 +5,9 @@ import "./index.css";
 
 function Planet({
   url,
-  position,
+  index,
   scale,
   rotationSpeed = 0.15,
-  floatAmount = 0.12,
   scrollZoom = 0,
 }) {
   const planetRef = useRef();
@@ -17,18 +16,35 @@ function Planet({
   useFrame((state, delta) => {
     if (!planetRef.current) return;
 
-    planetRef.current.rotation.y += delta * rotationSpeed;
+    const time = state.clock.elapsedTime;
 
+    // Five planets evenly spaced on one circular orbit.
+    const angle = time * 0.35 + index * ((Math.PI * 2) / 5);
+
+    const orbitWidth = 7;
+    const orbitDepth = 4;
+
+    const x = Math.sin(angle) * orbitWidth;
+    const z = -2 + Math.cos(angle) * orbitDepth;
+
+    planetRef.current.position.x = x;
     planetRef.current.position.y =
-      position[1] +
-      Math.sin(state.clock.elapsedTime * 0.8 + position[0]) * floatAmount;
+      Math.sin(time * 0.8 + index) * 0.3 - 0.2;
+    planetRef.current.position.z = z;
 
-    const zoomSize = scale * (1 + scrollZoom * 1.4);
-    planetRef.current.scale.setScalar(zoomSize);
+    // Planets look bigger when they come closer to the camera.
+    const depthSize = 0.72 + ((z + 6) / 8) * 0.45;
+
+    // Earth keeps its scroll zoom effect.
+    const finalSize = scale * depthSize * (1 + scrollZoom * 1.4);
+    planetRef.current.scale.setScalar(finalSize);
+
+    // Planets rotate around themselves too.
+    planetRef.current.rotation.y += delta * rotationSpeed;
   });
 
   return (
-    <group ref={planetRef} position={position} scale={scale}>
+    <group ref={planetRef} scale={scale}>
       <primitive object={scene} />
     </group>
   );
@@ -57,10 +73,9 @@ function Scene({ scrollProgress }) {
       <Suspense fallback={null}>
         <Planet
           url="/models/earth.glb"
-          position={[0, 0, 0]}
+          index={0}
           scale={0.003}
           rotationSpeed={0.2}
-          floatAmount={0.08}
           scrollZoom={scrollProgress}
         />
       </Suspense>
@@ -68,7 +83,7 @@ function Scene({ scrollProgress }) {
       <Suspense fallback={null}>
         <Planet
           url="/models/venus.glb"
-          position={[-4.2, 1.5, -1]}
+          index={1}
           scale={0.00125}
           rotationSpeed={0.12}
         />
@@ -77,7 +92,7 @@ function Scene({ scrollProgress }) {
       <Suspense fallback={null}>
         <Planet
           url="/models/mercury.glb"
-          position={[-3.6, -2.1, 0]}
+          index={2}
           scale={0.0008}
           rotationSpeed={0.25}
         />
@@ -86,7 +101,7 @@ function Scene({ scrollProgress }) {
       <Suspense fallback={null}>
         <Planet
           url="/models/mars.glb"
-          position={[4.2, -1.5, 0]}
+          index={3}
           scale={0.0013}
           rotationSpeed={0.16}
         />
@@ -95,10 +110,9 @@ function Scene({ scrollProgress }) {
       <Suspense fallback={null}>
         <Planet
           url="/models/saturn.glb"
-          position={[3.7, 2.2, -2]}
+          index={4}
           scale={0.0025}
           rotationSpeed={0.1}
-          floatAmount={0.08}
         />
       </Suspense>
 
